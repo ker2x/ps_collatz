@@ -2,28 +2,34 @@ import traer.physics.*;
 import java.util.*;
 
 //Constant
-final float NODE_SIZE = 10;
-final float EDGE_LENGTH = 10;
-final float EDGE_STRENGTH = 0.05;
-final float SPACER_STRENGTH = 1000;
-final float MAX_COLLATZ = 10000;
-final float SYSTEM_DAMP = 0.2;
+final float NODE_SIZE = 10;         //diameter of a node
+final float EDGE_LENGTH = 10;       //string length
+final float EDGE_STRENGTH = 0.05;   //string force
+final float SPACER_STRENGTH = 1000; //repulsion force between node
+final float SYSTEM_DAMP = 0.2;      //global physical damping
 
+final int REST_STEP = 20;    //how many physical step (frame) between computation ?
+
+final int MIN_COLLATZ = 1;   //computation starting point
+final int MAX_COLLATZ = 1000; //compute collatz up to ... ?
+
+HashMap hm = new HashMap();  //store node number -> particle
+HashMap mh = new HashMap();  //store particle object -> node number
+
+//misc global stuff, do not touch.
 ParticleSystem physics;
-HashMap hm = new HashMap();
-HashMap mh = new HashMap();
 float scale = 1;
 float centroidX = 0;
 float centroidY = 0;
-int plop;
+int restStep;
 
 int collatz = 1;
 
 
 void setup() {
-  size( 600, 600);
-  frameRate(24);
-  smooth();
+  size( 600, 600);   //feel free to change screen size
+  frameRate(24);     //max framerate
+  //smooth();        //antialiasing (useless at this scale)
   strokeWeight( 2 );
   ellipseMode( CENTER );       
   
@@ -40,16 +46,14 @@ void draw() {
   physics.tick(); 
   if ( physics.numberOfParticles() > 1 ) updateCentroid();
 
-  if(plop % 50 == 0) {
+  if(restStep % REST_STEP == 0) {
     if(collatz < MAX_COLLATZ) { 
       calcCollatz(collatz); 
       collatz++; 
     }
   }
-  plop++;
+  restStep++;
   
-  //background( 255 );
-  //fill( 0 );
   fill(0,50); 
   noStroke(); 
   rect(0,0,width,height); 
@@ -106,21 +110,6 @@ void calcCollatz(int c) {
 
 void drawNetwork()
 {      
-  // draw vertices
-  fill( 160 );
-  noStroke();
-  for ( int i = 0; i < physics.numberOfParticles(); ++i )
-  {
-    Particle v = physics.getParticle( i );
-    int a = (Integer)mh.get(v);
-    if(a % 2 == 0) {
-      fill( 255, i%255, 0 );
-    } else {
-      fill( 0, i%255, 255 );
-    }
-    ellipse( v.position().x(), v.position().y(), NODE_SIZE , NODE_SIZE  );
-    text( mh.get(v).toString(), v.position().x(), v.position().y());
-  }
 
   // draw edges 
   stroke( 0 );
@@ -136,6 +125,25 @@ void drawNetwork()
     vertex( b.position().x(), b.position().y() );
   }
   endShape();
+  // draw vertices
+  fill( 160 );
+  noStroke();
+  for ( int i = 0; i < physics.numberOfParticles(); ++i )
+  {
+    Particle v = physics.getParticle( i );
+    int a = (Integer)mh.get(v);
+    if(i == 0) { 
+      fill(255,255,255);
+      //v.makeFixed();
+    } else if(a % 2 == 0) {
+      fill( 255, i%255, 0 );
+    } else {
+      fill( 0, i%255, 255 );
+    }
+    ellipse( v.position().x(), v.position().y(), NODE_SIZE , NODE_SIZE  );
+    text( mh.get(v).toString(), v.position().x(), v.position().y());
+  }
+
 }
 
 
@@ -192,7 +200,7 @@ Particle createNode(int c) {
   Particle p = physics.makeParticle();
   hm.put(c, p );
   mh.put(p,c);
-  p.position().set(centroidX+ random( -100, 100 ), centroidY + random( -100, 100 ), 0 );
+  p.position().set(centroidX+ random( -1, 1 ), centroidY + random( -1, 1 ), 0 );
   return p;
 }
 
@@ -200,6 +208,6 @@ void linkNodeTo(int c, Particle p) {
   Particle q = (Particle)hm.get(c);
   addSpacersToNode( p, q );
   makeEdgeBetween( p, q );
-  p.position().set( q.position().x() + random( -0.1, 0.1 ), q.position().y() + random( -0.1, 0.1 ), 0 );
+  q.position().set( p.position().x() + random( -1, 1 ), p.position().y() + random( -1, 1 ), 0 );
 }
 
