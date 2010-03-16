@@ -6,12 +6,14 @@ final float NODE_SIZE = 10;         //diameter of a node
 final float EDGE_LENGTH = 10;       //string length
 final float EDGE_STRENGTH = 0.05;   //string force
 final float SPACER_STRENGTH = 1000; //repulsion force between node
-final float SYSTEM_DAMP = 0.2;      //global physical damping
+final float SYSTEM_DAMP = 0.1;      //global physical damping
 
-final int REST_STEP = 20;    //how many physical step (frame) between computation ?
+final int REST_STEP = 1;    //how many physical step (frame) between computation ?
 
 final int MIN_COLLATZ = 1;   //computation starting point
 final int MAX_COLLATZ = 1000; //compute collatz up to ... ?
+
+final int PRECOMPUTE_COLLATZ = 0;
 
 HashMap hm = new HashMap();  //store node number -> particle
 HashMap mh = new HashMap();  //store particle object -> node number
@@ -25,10 +27,11 @@ int restStep;
 
 int collatz = 1;
 
+//[5,1,9,7,0,3,4,9,7,2]
 
 void setup() {
   size( 600, 600);   //feel free to change screen size
-  frameRate(24);     //max framerate
+  frameRate(240);     //max framerate
   //smooth();        //antialiasing (useless at this scale)
   strokeWeight( 2 );
   ellipseMode( CENTER );       
@@ -43,26 +46,43 @@ void setup() {
 
 
 void draw() {
-  physics.tick(); 
-  if ( physics.numberOfParticles() > 1 ) updateCentroid();
-
-  if(restStep % REST_STEP == 0) {
-    if(collatz < MAX_COLLATZ) { 
-      calcCollatz(collatz); 
-      collatz++; 
-    }
-  }
-  restStep++;
   
+  if(PRECOMPUTE_COLLATZ == 0) { 
+    physics.tick(); 
+    if ( physics.numberOfParticles() > 1 ) updateCentroid();
+  }
+
   fill(0,50); 
   noStroke(); 
   rect(0,0,width,height); 
   fill(128);
   text( "" + physics.numberOfParticles() + " PARTICLES\n" + (int)frameRate + " FPS", 10, 20 );
-  translate( width/2 , height/2 );
-  scale( scale );
-  translate( -centroidX, -centroidY );  
-  drawNetwork();  
+  
+
+  if(restStep % REST_STEP == 0) {
+    if(collatz < MAX_COLLATZ) { 
+      calcCollatz(collatz); 
+      collatz++; 
+    } else {
+      if(PRECOMPUTE_COLLATZ == 1) {
+        physics.tick(); 
+        if ( physics.numberOfParticles() > 1 ) updateCentroid();
+        translate( width/2 , height/2 );
+        scale( scale );
+        translate( -centroidX, -centroidY );  
+        drawNetwork();
+      }  
+    }
+  }
+  
+  restStep++;
+  
+  if(PRECOMPUTE_COLLATZ == 0) {
+    translate( width/2 , height/2 );
+    scale( scale );
+    translate( -centroidX, -centroidY );  
+    drawNetwork();
+  }  
 }
 
 void calcCollatz(int c) {
@@ -141,7 +161,7 @@ void drawNetwork()
       fill( 0, i%255, 255 );
     }
     ellipse( v.position().x(), v.position().y(), NODE_SIZE , NODE_SIZE  );
-    text( mh.get(v).toString(), v.position().x(), v.position().y());
+    if(PRECOMPUTE_COLLATZ == 0) text( mh.get(v).toString(), v.position().x(), v.position().y());
   }
 
 }
@@ -200,7 +220,7 @@ Particle createNode(int c) {
   Particle p = physics.makeParticle();
   hm.put(c, p );
   mh.put(p,c);
-  p.position().set(centroidX+ random( -1, 1 ), centroidY + random( -1, 1 ), 0 );
+  p.position().set(centroidX+ random( -100, 100 ), centroidY + random( -100, 100 ), 0 );
   return p;
 }
 
