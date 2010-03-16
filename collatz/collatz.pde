@@ -31,7 +31,7 @@ void setup() {
   physics.setIntegrator( ParticleSystem.MODIFIED_EULER );
   physics.setDrag( 0.2 );
   
-  textFont( loadFont( "DejaVuSans-14.vlw" ) );
+  textFont( loadFont( "LucidaSans-14.vlw" ) );
   initialize();
 }
 
