@@ -8,7 +8,7 @@ final float EDGE_STRENGTH = 0.05;   //string force
 final float SPACER_STRENGTH = 1000; //repulsion force between node
 final float SYSTEM_DAMP = 0.1;      //global physical damping
 
-final int REST_STEP = 1;    //how many physical step (frame) between computation ?
+final int REST_STEP = 10;    //how many physical step (frame) between computation ?
 
 final int MIN_COLLATZ = 1;   //computation starting point
 final int MAX_COLLATZ = 1000; //compute collatz up to ... ?
