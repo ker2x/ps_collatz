@@ -5,6 +5,7 @@ import java.util.*;
 final float NODE_SIZE = 20;         //diameter of a node
 final float EDGE_LENGTH = 10;       //string length
 final float EDGE_STRENGTH = 0.05;   //string force
+final float EDGE_WIDTH = 2;         //strokeWeight(EDGE_WIDTH)
 final float SPACER_STRENGTH = 1000; //repulsion force between node
 final float SYSTEM_DAMP = 0.1;      //global physical damping
 
@@ -138,7 +139,7 @@ void drawNetwork()
   {
     Spring e = physics.getSpring( i );
     stroke(100);
-    strokeWeight(2);
+    strokeWeight(EDGE_WIDTH);
     Particle a = e.getOneEnd();
     Particle b = e.getTheOtherEnd();
     vertex( a.position().x(), a.position().y() );
