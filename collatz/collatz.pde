@@ -137,7 +137,7 @@ void drawNetwork()
   for ( int i = 0; i < physics.numberOfSprings(); ++i )
   {
     Spring e = physics.getSpring( i );
-    stroke(50);
+    stroke(100);
     strokeWeight(2);
     Particle a = e.getOneEnd();
     Particle b = e.getTheOtherEnd();
