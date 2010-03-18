@@ -6,8 +6,8 @@ final float NODE_SIZE = 10;
 final float EDGE_LENGTH = 10;
 final float EDGE_STRENGTH = 0.05;
 final float SPACER_STRENGTH = 1000;
-final float MAX_COLLATZ = 10000;
-final float SYSTEM_DAMP = 0.2;
+final float MAX_COLLATZ = 500;
+final float SYSTEM_DAMP = 0.1;
 
 ParticleSystem physics;
 HashMap hm = new HashMap();
@@ -40,7 +40,7 @@ void draw() {
   physics.tick(); 
   if ( physics.numberOfParticles() > 1 ) updateCentroid();
 
-  if(plop % 50 == 0) {
+  if(plop % 10 == 0) {
     if(collatz < MAX_COLLATZ) { 
       calcCollatz(collatz); 
       collatz++; 
