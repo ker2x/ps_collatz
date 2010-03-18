@@ -161,7 +161,7 @@ void drawNetwork()
       fill( 0, i%255, 255 );
     }
     ellipse( v.position().x(), v.position().y(), NODE_SIZE , NODE_SIZE  );
-    if(PRECOMPUTE_COLLATZ == 0) text( mh.get(v).toString(), v.position().x(), v.position().y());
+    if(PRECOMPUTE_COLLATZ == 0) text( mh.get(v).toString(), v.position().x() + NODE_SIZE/2, v.position().y() + NODE_SIZE/2);
   }
 
 }
