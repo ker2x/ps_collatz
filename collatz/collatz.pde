@@ -2,7 +2,7 @@ import traer.physics.*;
 import java.util.*;
 
 //Constant
-final float NODE_SIZE = 10;         //diameter of a node
+final float NODE_SIZE = 20;         //diameter of a node
 final float EDGE_LENGTH = 10;       //string length
 final float EDGE_STRENGTH = 0.05;   //string force
 final float SPACER_STRENGTH = 1000; //repulsion force between node
